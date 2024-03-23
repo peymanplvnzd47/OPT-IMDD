@@ -31,3 +31,26 @@ The signal processing pipeline involves:
 - **Pulse Shaping (`pulseShape`):** Creates a pulse shaping function for a typical Raised Cosine (RC) pulse. Users can specify different types of filters (e.g., 'rect', 'nrz', 'rrc', 'rc', and 'srrc') by calling respective functions (`rrcosfilter()`, `rcosfilter()`, or `srrcosfilter()`), along with parameters such as samples per symbol, number of filter coefficients, roll-off factor, and symbol period in seconds.
 
 This project aims to provide a comprehensive toolset for simulating and analyzing next-generation optical fiber transceivers, catering to the demands of high-speed data transmission in modern data center environments.
+
+
+
+## Bit Error Rate (BER) Calculation
+
+To analyze the performance, the Bit Error Rate (BER) is calculated by comparing the received bits (`bitsRx`) with the transmitted bits (`bitsTx`). The code computes the BER by performing a bitwise XOR (exclusive OR) operation between the received and transmitted bits. 
+
+A `discard` variable is used to exclude a certain number of bits at the beginning and end of the sequences, which may be affected by initialization or synchronization issues. The resulting vector indicates the positions where the transmitted bits differ from the received bits. 
+
+The mean of the resulting error vector (`err`) is computed using `np.mean(err)`, representing the ratio of bit errors to the total number of compared bits.
+
+For a more accurate BER calculation, an optimal time sampling instance is determined through a search process.
+
+## Erbium-Doped Fiber Amplifier (EDFA)
+
+The implemented EDFA function calculates the noise spectral power (`nsp`) using the formula `(Glin·NFlin−1)/(2·(Glin−1))`, where `Glin` represents the linear gain and `NFlin` denotes the linear noise figure.
+
+The Amplified Spontaneous Emission (ASE) noise power (`Nase`) is determined using the formula `(Glin−1)·nsp·h·Fc`, where `h` represents the Planck constant.
+
+The total noise power (`pnoise`) is computed by multiplying `Nase` with the sampling frequency (`Fs`). 
+
+At the end, a random noise sample with zero mean and a standard deviation determined by `ppnoise` is generated. The function returns the amplified and noisy optical signal `Ei ·√(Glin + noise)`.
+
